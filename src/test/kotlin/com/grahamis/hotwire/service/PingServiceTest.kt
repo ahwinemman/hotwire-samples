@@ -25,7 +25,7 @@ class PingServiceTest {
     fun `should ping`() {
         mockSocketConnects()
         Assertions.assertThat(
-            runBlocking { PingService(socket).ping(hostname, port) }
+            runBlocking { PingService(socket).ping(hostname, port).value }
         ).isGreaterThanOrEqualTo(0)
     }
 
@@ -33,7 +33,7 @@ class PingServiceTest {
     fun `should timeout`() {
         mockSocketTimeout()
         Assertions.assertThat(
-            runBlocking { PingService(socket).ping(hostname, port) }
+            runBlocking { PingService(socket).ping(hostname, port).value }
         ).isEqualTo(-1)
     }
 

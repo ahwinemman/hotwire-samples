@@ -34,12 +34,7 @@ class PingController {
         model: Model,
         templateSelectorModifier: TemplateSelectorModifier = TemplateSelectorModifier.Default
     ): String {
-        model.addAttribute("pingTime", pingTime())
+        model.addAttribute("pingTime", pingService.ping(hostname, port))
         return templateSelectorModifier.modifyName("ping")
-    }
-
-    private suspend fun pingTime(): String {
-        val duration = pingService.ping(hostname, port)
-        return if (duration < 0) "timeout" else "$duration ms"
     }
 }
