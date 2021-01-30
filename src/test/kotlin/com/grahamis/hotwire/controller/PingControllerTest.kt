@@ -7,6 +7,7 @@ import com.grahamis.hotwire.service.PingService
 import com.grahamis.matches
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
@@ -17,10 +18,10 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
-import java.io.IOException
 import java.net.InetSocketAddress
-import java.net.Socket
 import java.net.SocketAddress
+import java.nio.channels.AsynchronousSocketChannel
+import java.util.concurrent.Future
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -32,7 +33,10 @@ class PingControllerTest {
     private lateinit var webClient: WebTestClient
 
     @MockBean(reset = MockReset.BEFORE)
-    private lateinit var socket: Socket
+    private lateinit var socket: AsynchronousSocketChannel
+
+    @Mock
+    private lateinit var futureVoid: Future<Void>
 
     @MockBean(reset = MockReset.BEFORE)
     private lateinit var address: InetSocketAddress
@@ -67,13 +71,11 @@ class PingControllerTest {
     }
 
     private fun mockSocketTimeout() {
-        `when`(socket.connect(any(SocketAddress::class.java))).thenThrow(IOException())
-        `when`(socket.connect(any(SocketAddress::class.java), anyInt())).thenThrow(IOException())
+        `when`(socket.connect(any(SocketAddress::class.java))).thenThrow(RuntimeException())
     }
 
     private fun mockSocketConnects() {
-        doNothing().`when`(socket).connect(any(SocketAddress::class.java))
-        doNothing().`when`(socket).connect(any(SocketAddress::class.java), anyInt())
+        `when`(socket.connect(any(SocketAddress::class.java))).thenReturn(futureVoid)
     }
 
     private fun response() =
