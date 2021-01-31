@@ -1,5 +1,19 @@
+<!DOCTYPE html>
+<html lang="${lang}"
+      xmlns="http://www.w3.org/1999/xhtml"
+      data-th-lang="${lang}" data-th-with="lang=${#locale.language}">
+<head data-th-replace="~{fragments/html-head :: html-head}"></head>
+<head>
+    <title>Ping</title>
+</head>
+<body>
+<h1>The Ping Page</h1>
+<p>Ping time: <span id="pingTime">[[${pingTime}]]</span></p>
+<a href="javascript:history.back()">🔙 Back</a>
 <turbo-stream action="append" target="pings">
     <template>
         <li>[[${pingTime}]]</li>
     </template>
 </turbo-stream>
+</body>
+</html>
