@@ -1,7 +1,6 @@
 package com.grahamis.hotwire.controller
 
 import com.grahamis.CustomMediaType
-import com.grahamis.hotwire.TemplateSelectorModifier
 import com.grahamis.hotwire.service.PingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -24,17 +23,9 @@ class PingController {
     @Value("\${ping.port:8080}")
     private val port: Int = 8080
 
-    @RequestMapping(produces = [CustomMediaType.TURBO_STREAM_VALUE])
-    suspend fun pingerStream(model: Model) = view(model, TemplateSelectorModifier.TurboStream)
-
-    @RequestMapping(produces = [MediaType.TEXT_HTML_VALUE])
-    suspend fun pingerPage(model: Model) = view(model)
-
-    private suspend fun view(
-        model: Model,
-        templateSelectorModifier: TemplateSelectorModifier = TemplateSelectorModifier.Default
-    ): String {
+    @RequestMapping(produces = [MediaType.TEXT_HTML_VALUE, CustomMediaType.TURBO_STREAM_VALUE])
+    suspend fun pinger(model: Model): String {
         model.addAttribute("pingTime", pingService.ping(hostname, port))
-        return templateSelectorModifier.modifyName("ping")
+        return "ping.turbo-stream"
     }
 }
